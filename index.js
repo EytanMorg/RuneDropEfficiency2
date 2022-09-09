@@ -1,4 +1,5 @@
 const pluginName = 'RuneDropEfficiency2';
+import 'rune-drop.css';
 
 module.exports = {
   defaultConfig: {
