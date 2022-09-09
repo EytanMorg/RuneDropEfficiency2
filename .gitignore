@@ -1,1 +1,3 @@
 *.asar
+.vscode
+node_modules/
