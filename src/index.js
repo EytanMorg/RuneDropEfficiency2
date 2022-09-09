@@ -1,5 +1,4 @@
 const pluginName = 'RuneDropEfficiency2';
-import 'rune-drop.css';
 
 module.exports = {
   defaultConfig: {
@@ -225,7 +224,7 @@ module.exports = {
 	  html = html.concat('<div class="description"> Hero Gem + Hero Grinds Table:</div>');
 	  html = html.concat(`<div class="gem-table">`);
 	  //Table 1: Hero Gem + Grinds
-	  html = html.concat(`<table border="1" cellspacing="0" cellpadding="0"><tr><th>Sub</th>`);
+	  html = html.concat(`<table border="1" cellspacing="0" cellpadding="4"><tr><th>Sub</th>`);
 	  //add column headers from effect strings
 	  for (var sub in this.geteffectTypeStrings) {
 			  html = sub>0 ? html.concat(`<th>${this.geteffectTypeStrings[sub]}</th>`) : html;
@@ -268,7 +267,7 @@ module.exports = {
 	  //Table 2: Legend Gem + Grinds
 	  html = html.concat('<div class="description"> Legend Gem + Legend Grinds Table:</div>');
 	  html = html.concat(`<div class="gem-table">`);
-	  html = html.concat(`<table border="1" cellspacing="0" cellpadding="0"><tr><th>Sub</th>`);
+	  html = html.concat(`<table border="1" cellspacing="0" cellpadding="4"><tr><th>Sub</th>`);
 	  //add column headers from effect strings
 	  for (var sub in this.geteffectTypeStrings) {
 			  html = sub>0 ? html.concat(`<th>${this.geteffectTypeStrings[sub]}</th>`) : html;
