@@ -1,5 +1,5 @@
 date=$(date '+%Y_%m_%d_%H%M%S')
-fileName=$"RuneDropEff2-$date.asar"
+fileName=$"RuneDropEff2-$date-test.asar"
 
 asar pack src dist/$fileName
 

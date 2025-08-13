@@ -69,6 +69,7 @@ module.exports = {
           break;
         case 'UpgradeRune_v2': 
         case 'upgradeRune_v2':
+        case 'RevalueRune':
         {
 
           if (config.Config.Plugins[this.pluginName].showAllUpgrades) {
