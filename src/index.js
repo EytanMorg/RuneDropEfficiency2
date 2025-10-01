@@ -20,12 +20,19 @@ module.exports = {
   init(proxy, config) {
     proxy.on('apiCommand', (req, resp) => {
       if (config.Config.Plugins[this.pluginName].enabled) {
-        this.processCommand(proxy, req, resp, config);
+        let clonedReq = structuredClone(req);
+        let clonedResp= structuredClone(resp)
+        this.processCommand(
+          proxy, 
+          clonedReq, 
+          clonedResp, 
+          config
+        );
       }
     });
   },
-  processCommand(proxy, req, resp, config) {
-    const { command } = req;
+  processCommand(proxy, clonedReq, clonedResp, config) {
+    const { command } = clonedReq;
     let runesInfo = [];
     try {
       // Extract the rune and display it's efficiency stats.
@@ -33,8 +40,8 @@ module.exports = {
         case 'BattleDungeonResult':
         case 'BattleScenarioResult':
         case 'BattleDimensionHoleDungeonResult':
-          if (resp.win_lose === 1) {
-            const reward = resp.reward ? resp.reward : {};
+          if (clonedResp.win_lose === 1) {
+            const reward = clonedResp.reward ? clonedResp.reward : {};
 
             if (reward.crate && reward.crate.rune) {
               runesInfo.push(this.logRuneDrop(reward.crate.rune, config));
@@ -42,8 +49,8 @@ module.exports = {
           }
           break;
         case 'BattleDimensionHoleDungeonResult_v2':
-          if (resp.win_lose === 1) {
-            const rewards = resp.changed_item_list ? resp.changed_item_list : [];
+          if (clonedResp.win_lose === 1) {
+            const rewards = clonedResp.changed_item_list ? clonedResp.changed_item_list : [];
 
             if (rewards) {
               rewards.forEach(reward => {
@@ -55,8 +62,8 @@ module.exports = {
           }
           break;
         case 'BattleDungeonResult_V2':
-          if (resp.win_lose === 1) {
-            const rewards = resp.changed_item_list ? resp.changed_item_list : [];
+          if (clonedResp.win_lose === 1) {
+            const rewards = clonedResp.changed_item_list ? clonedResp.changed_item_list : [];
 
             if (rewards) {
               rewards.forEach(reward => {
@@ -73,13 +80,13 @@ module.exports = {
         {
 
           if (config.Config.Plugins[this.pluginName].showAllUpgrades) {
-            runesInfo.push(this.logRuneDrop(resp.rune, config));
+            runesInfo.push(this.logRuneDrop(clonedResp.rune, config));
           } else {
-            const originalLevel = req.upgrade_curr;
-            const newLevel = resp.rune.upgrade_curr;
+            const originalLevel = clonedReq.upgrade_curr;
+            const newLevel = clonedResp.rune.upgrade_curr;
 
             if (newLevel > originalLevel && newLevel % 3 === 0 && newLevel <= 12) {
-              runesInfo.push(this.logRuneDrop(resp.rune, config));
+              runesInfo.push(this.logRuneDrop(clonedResp.rune, config));
             }
           }
           break;
@@ -89,29 +96,29 @@ module.exports = {
         case 'ConvertRune':
         case 'ConvertRune_v2':
         case 'ConfirmRune':
-          runesInfo.push(this.logRuneDrop(resp.rune, config));
+          runesInfo.push(this.logRuneDrop(clonedResp.rune, config));
           break;
 
         case 'BuyBlackMarketItem':
-          if (resp.runes && resp.runes.length === 1) {
-            runesInfo.push(this.logRuneDrop(resp.runes[0], config));
+          if (clonedResp.runes && clonedResp.runes.length === 1) {
+            runesInfo.push(this.logRuneDrop(clonedResp.runes[0], config));
           }
           break;
 
         case 'BuyGuildBlackMarketItem':
-          if (resp.runes && resp.runes.length === 1) {
-            runesInfo.push(this.logRuneDrop(resp.runes[0], config));
+          if (clonedResp.runes && clonedResp.runes.length === 1) {
+            runesInfo.push(this.logRuneDrop(clonedResp.runes[0], config));
           }
           break;
 
         case 'BuyShopItem':
-          if (resp.reward && resp.reward.crate && resp.reward.crate.runes) {
-            runesInfo.push(this.logRuneDrop(resp.reward.crate.runes[0], config));
+          if (clonedResp.reward && clonedResp.reward.crate && clonedResp.reward.crate.runes) {
+            runesInfo.push(this.logRuneDrop(clonedResp.reward.crate.runes[0], config));
           }
           break;
 
         case 'GetBlackMarketList':
-          resp.market_list.forEach(item => {
+          clonedResp.market_list.forEach(item => {
             if (item.item_master_type === 8 && item.runes) {
               runesInfo.push(this.logRuneDrop(item.runes[0], config));
             }
@@ -119,7 +126,7 @@ module.exports = {
           break;
 
         case 'GetGuildBlackMarketList':
-          resp.market_list.forEach(item => {
+          clonedResp.market_list.forEach(item => {
             if (item.item_master_type === 8 && item.runes) {
               runesInfo.push(this.logRuneDrop(item.runes[0], config));
             }
@@ -127,7 +134,7 @@ module.exports = {
           break;
 
         case 'BattleWorldBossResult': {
-          const reward = resp.reward ? resp.reward : {};
+          const reward = clonedResp.reward ? clonedResp.reward : {};
 
           if (reward.crate && reward.crate.runes) {
             reward.crate.runes.forEach(rune => {
@@ -137,8 +144,8 @@ module.exports = {
           break;
         }
         case 'BattleRiftDungeonResult':
-          if (resp.item_list) {
-            resp.item_list.forEach(item => {
+          if (clonedResp.item_list) {
+            clonedResp.item_list.forEach(item => {
               if (item.type === 8) {
                 runesInfo.push(this.logRuneDrop(item.info, config));
               }
@@ -158,7 +165,7 @@ module.exports = {
         });
       }
     } catch (e) {
-      proxy.log({ type: 'debug', source: 'plugin', name: this.pluginName, message: `${resp['command']}-${e.message}` });
+      proxy.log({ type: 'debug', source: 'plugin', name: this.pluginName, message: `${clonedResp['command']}-${e.message}` });
     }
   },
 
