@@ -21,7 +21,7 @@ module.exports = {
     proxy.on('apiCommand', (req, resp) => {
       if (config.Config.Plugins[this.pluginName].enabled) {
         let clonedReq = structuredClone(req);
-        let clonedResp= structuredClone(resp)
+        let clonedResp = structuredClone(resp);
         this.processCommand(
           proxy, 
           clonedReq, 
