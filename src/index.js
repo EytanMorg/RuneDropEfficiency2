@@ -70,6 +70,7 @@ module.exports = {
         case 'UpgradeRune_v2': 
         case 'upgradeRune_v2':
         case 'RevalueRune':
+        case 'refineRune':
         {
 
           if (config.Config.Plugins[this.pluginName].showAllUpgrades) {
@@ -89,6 +90,7 @@ module.exports = {
         case 'ConvertRune':
         case 'ConvertRune_v2':
         case 'ConfirmRune':
+        case 'confirmRefineRune':
           runesInfo.push(this.logRuneDrop(resp.rune, config));
           break;
 
